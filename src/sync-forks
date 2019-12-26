@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+DIR=${1:-.}
+
+git_repos=`find $DIR -name .git -exec dirname {} \; -prune`
+for repo in $git_repos; do
+    cd $repo
+    git remote -v | grep "upstream"
+    if [[ "$?" -ne 0 ]]; then
+        echo "Upstream repo not found. Skipping this repo: $repo"
+        continue
+    else
+        echo "Syncing: $repo"
+        git stash && git checkout master
+        git fetch upstream
+        git checkout master
+        git merge upstream/master
+    fi
+done
