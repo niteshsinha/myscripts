@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+DIR=${1:-$PWD}
+
+git_repos=`find $DIR -name .git -exec dirname {} \; -prune`
+
+for repo in $git_repos; do
+    cd $repo
+    echo "Syncing: $repo"
+    git stash && git checkout master && git pull
+done
